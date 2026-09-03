@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useOffline } from '../context/OfflineContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
 import { getCurrentPosition } from '../utils/geoUtils';
 import EmergencyCard from '../components/emergency/EmergencyCard';
 import EmergencyTable from '../components/emergency/EmergencyTable';
@@ -19,8 +20,10 @@ import {
   LayoutGrid,
   List,
   RefreshCw,
+  Map as MapIcon,
 } from 'lucide-react';
-
+import MapView from '../components/map/MapView';
+import LocationPickerMap from '../components/map/LocationPickerMap';
 const RESOURCE_OPTIONS = [
   'boats',
   'life_jackets',
@@ -34,6 +37,7 @@ const RESOURCE_OPTIONS = [
 ];
 
 const EmergenciesPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [emergencies, setEmergencies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,8 +60,8 @@ const EmergenciesPage = () => {
     emergency_type: 'flood_trapped',
     description: '',
     address: '',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    latitude: '',
+    longitude: '',
     people_affected: 1,
     children: 0,
     elderly: 0,
@@ -310,6 +314,15 @@ const EmergenciesPage = () => {
             >
               <List className="w-4 h-4" />
             </button>
+            <button
+              onClick={() => setViewMode('map')}
+              className={`p-1.5 rounded-md ${
+                viewMode === 'map' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-500 hover:text-slate-900'
+              }`}
+              title="Map View"
+            >
+              <MapIcon className="w-4 h-4" />
+            </button>
           </div>
 
           <button
@@ -340,9 +353,28 @@ const EmergenciesPage = () => {
             <EmergencyCard key={em.id} emergency={em} />
           ))}
         </div>
-      ) : (
+      ) : viewMode === 'table' ? (
         <div className="card-base overflow-hidden">
           <EmergencyTable emergencies={filteredEmergencies} />
+        </div>
+      ) : (
+        <div className="card-base p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <MapIcon className="w-4 h-4 text-blue-600" />
+              Emergency Dispatches Tactical Map ({filteredEmergencies.length} plotted)
+            </h3>
+            {userGpsLocation?.lat && (
+              <span className="text-[11px] font-mono text-slate-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                📍 Your Location: {userGpsLocation.lat.toFixed(4)}° N, {userGpsLocation.lon.toFixed(4)}° E
+              </span>
+            )}
+          </div>
+          <MapView
+            emergencies={filteredEmergencies}
+            userLocation={userGpsLocation}
+            height="560px"
+          />
         </div>
       )}
 
@@ -389,11 +421,26 @@ const EmergenciesPage = () => {
                 required
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Kazhakkoottam, Trivandrum"
+                placeholder="e.g., MG Road, Near Central Bridge"
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
+
+          {/* Interactive Leaflet Location Picker */}
+          <LocationPickerMap
+            latitude={formData.latitude}
+            longitude={formData.longitude}
+            height="220px"
+            onChange={({ latitude, longitude, address }) => {
+              setFormData((prev) => ({
+                ...prev,
+                latitude,
+                longitude,
+                address: address || prev.address || (latitude ? `GPS: ${latitude}, ${longitude}` : ''),
+              }));
+            }}
+          />
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">

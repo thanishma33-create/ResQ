@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
 import StatusBadge from '../components/common/StatusBadge';
 import Modal from '../components/common/Modal';
 import Loading from '../components/common/Loading';
@@ -26,6 +28,7 @@ const SPECIALTIES = [
 const STATUSES = ['AVAILABLE', 'ASSIGNED', 'EN_ROUTE', 'ON_SCENE', 'BUSY', 'OFFLINE'];
 
 const TeamsPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [teams, setTeams] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,9 +44,9 @@ const TeamsPage = () => {
     team_leader: '',
     contact_phone: '',
     specialty: 'Water & Flood Rescue',
-    latitude: 8.5241,
-    longitude: 76.9366,
-    base_location: 'Central NDRF Station, Trivandrum',
+    latitude: '',
+    longitude: '',
+    base_location: '',
     status: 'AVAILABLE',
     max_capacity: 10,
   });
@@ -71,16 +74,26 @@ const TeamsPage = () => {
     fetchTeams();
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setEditingTeam(null);
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
     setFormData({
       name: '',
       team_leader: '',
       contact_phone: '',
       specialty: 'Water & Flood Rescue',
-      latitude: 8.5241,
-      longitude: 76.9366,
-      base_location: 'Central NDRF Station, Trivandrum',
+      latitude: initialLat,
+      longitude: initialLon,
+      base_location: '',
       status: 'AVAILABLE',
       max_capacity: 10,
     });
@@ -377,7 +390,7 @@ const TeamsPage = () => {
               type="text"
               value={formData.base_location}
               onChange={(e) => setFormData({ ...formData, base_location: e.target.value })}
-              placeholder="Central Fire & Rescue Depot, Trivandrum"
+              placeholder="e.g., Regional Disaster Rescue Depot, Sector 2"
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />
           </div>

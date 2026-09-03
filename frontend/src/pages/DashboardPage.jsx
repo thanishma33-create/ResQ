@@ -29,6 +29,7 @@ import {
   Clock,
   MapPin,
   CheckCircle2,
+  Compass,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -296,6 +297,73 @@ const DashboardPage = () => {
             <span>Sync {queuedCount} Queued</span>
           </button>
         )}
+      </div>
+
+      {/* 📍 Current Location Proximity Intelligence Card */}
+      <div className="card-base p-4 bg-gradient-to-r from-blue-50/80 via-white to-slate-50 border border-blue-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <MapPin className={`w-5 h-5 ${isGpsLocating ? 'animate-bounce' : ''}`} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">
+                📍 Current Location
+              </span>
+              {userLocation?.accuracy && (
+                <span className="text-[10px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                  Accuracy: {userLocation.accuracy} m
+                </span>
+              )}
+            </div>
+            <h3 className="text-sm font-bold text-slate-900 mt-0.5">
+              {userLocation?.lat ? locationName || 'Current GPS Location' : 'Location access is required to find nearby assistance.'}
+            </h3>
+            {userLocation?.lat && (
+              <p className="text-xs text-slate-600 mt-0.5 flex items-center gap-3 flex-wrap">
+                <span className="font-semibold text-purple-700">🏫 {nearbySummary.shelters} Shelters</span>
+                <span>•</span>
+                <span className="font-semibold text-emerald-700">📦 {nearbySummary.resources} Resources</span>
+                <span>•</span>
+                <span className="font-semibold text-blue-700">🚑 {nearbySummary.teams} Rescue Teams</span>
+                <span className="text-[11px] text-slate-400 font-mono">
+                  ({userLocation.lat.toFixed(4)}° N, {userLocation.lon.toFixed(4)}° E)
+                </span>
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 self-start md:self-auto">
+          {!userLocation?.lat ? (
+            <button
+              onClick={refreshLocation}
+              disabled={isGpsLocating}
+              className="px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <Compass className={`w-3.5 h-3.5 ${isGpsLocating ? 'animate-spin' : ''}`} />
+              <span>{isGpsLocating ? 'Detecting Location...' : 'Use My Current Location'}</span>
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={refreshLocation}
+                disabled={isGpsLocating}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isGpsLocating ? 'animate-spin' : ''}`} />
+                <span>{isGpsLocating ? 'Locating...' : 'Refresh'}</span>
+              </button>
+              <Link
+                to="/nearby"
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <span>Help Near Me</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Primary KPI Grid (5 Key Metrics) */}

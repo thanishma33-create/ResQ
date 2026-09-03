@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getCurrentPosition, reverseGeocodeLocation } from '../services/locationService';
+import { getCurrentLocation, reverseGeocodeLocation } from '../services/locationService';
 
 export const useCurrentLocation = () => {
   const [location, setLocation] = useState(() => {
@@ -19,9 +19,9 @@ export const useCurrentLocation = () => {
     }
   });
 
-  const [isLocating, setIsLocating] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [permissionStatus, setPermissionStatus] = useState('prompt'); // 'prompt' | 'granted' | 'denied' | 'unavailable' | 'timeout'
+  const [permission, setPermission] = useState('prompt'); // 'prompt' | 'granted' | 'denied' | 'unavailable' | 'timeout'
   const [lastUpdated, setLastUpdated] = useState(() => Date.now());
   const [isLiveTracking, setIsLiveTracking] = useState(false);
 
@@ -34,35 +34,35 @@ export const useCurrentLocation = () => {
       navigator.permissions
         .query({ name: 'geolocation' })
         .then((res) => {
-          setPermissionStatus(res.state);
-          res.onchange = () => setPermissionStatus(res.state);
+          setPermission(res.state);
+          res.onchange = () => setPermission(res.state);
         })
         .catch(() => {});
     }
   }, []);
 
   const refreshLocation = useCallback(async () => {
-    setIsLocating(true);
+    setLoading(true);
     setError(null);
 
     try {
-      const pos = await getCurrentPosition();
+      const pos = await getCurrentLocation();
       const updated = {
-        lat: pos.lat,
-        lon: pos.lon,
-        latitude: pos.lat,
-        longitude: pos.lon,
+        lat: pos.latitude,
+        lon: pos.longitude,
+        latitude: pos.latitude,
+        longitude: pos.longitude,
         accuracy: pos.accuracy,
         timestamp: pos.timestamp,
       };
 
       setLocation(updated);
       setLastUpdated(Date.now());
-      setPermissionStatus('granted');
+      setPermission('granted');
       localStorage.setItem('resq_last_user_location', JSON.stringify(updated));
 
       // Asynchronously resolve human-readable location name
-      reverseGeocodeLocation(pos.lat, pos.lon)
+      reverseGeocodeLocation(pos.latitude, pos.longitude)
         .then((name) => {
           if (name) {
             setLocationName(name);
@@ -76,21 +76,21 @@ export const useCurrentLocation = () => {
       console.warn('Current GPS location retrieval error:', err.message);
       setError(err.message);
       if (err.code === 1) {
-        setPermissionStatus('denied');
+        setPermission('denied');
       } else if (err.code === 2) {
-        setPermissionStatus('unavailable');
+        setPermission('unavailable');
       } else if (err.code === 3) {
-        setPermissionStatus('timeout');
+        setPermission('timeout');
       }
       return null;
     } finally {
-      setIsLocating(false);
+      setLoading(false);
     }
   }, []);
 
   // Live Location Tracker (watchPosition with movement threshold)
   const startLiveTracking = useCallback(() => {
-    if (!navigator.geolocation) return;
+    if (typeof navigator === 'undefined' || !navigator.geolocation) return;
 
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
@@ -110,7 +110,7 @@ export const useCurrentLocation = () => {
 
         setLocation(updated);
         setLastUpdated(Date.now());
-        setPermissionStatus('granted');
+        setPermission('granted');
         localStorage.setItem('resq_last_user_location', JSON.stringify(updated));
 
         // Throttle reverse-geocoding (at most once every 60 seconds)
@@ -134,13 +134,13 @@ export const useCurrentLocation = () => {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 10000,
+        maximumAge: 5000,
       }
     );
   }, []);
 
   const stopLiveTracking = useCallback(() => {
-    if (watchIdRef.current !== null && navigator.geolocation) {
+    if (watchIdRef.current !== null && typeof navigator !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
@@ -159,7 +159,7 @@ export const useCurrentLocation = () => {
   useEffect(() => {
     refreshLocation();
     return () => {
-      if (watchIdRef.current !== null && navigator.geolocation) {
+      if (watchIdRef.current !== null && typeof navigator !== 'undefined' && navigator.geolocation) {
         navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
@@ -167,12 +167,17 @@ export const useCurrentLocation = () => {
 
   return {
     location,
-    locationName,
-    isLocating,
+    loading,
+    isLocating: loading,
     error,
-    permissionStatus,
+    permission,
+    permissionStatus: permission,
+    accuracy: location?.accuracy || null,
+    timestamp: location?.timestamp || lastUpdated,
     lastUpdated,
+    locationName,
     isLiveTracking,
+    getCurrentLocation: refreshLocation,
     refreshLocation,
     startLiveTracking,
     stopLiveTracking,

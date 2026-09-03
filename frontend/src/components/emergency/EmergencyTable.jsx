@@ -49,9 +49,11 @@ const EmergencyTable = ({ emergencies = [], onAssign }) => {
               </td>
 
               <td className="py-3.5 px-4 max-w-[200px]">
-                <p className="text-slate-700 font-medium truncate">{em.address}</p>
+                <p className="text-slate-700 font-medium truncate">{em.address || 'Reported Location'}</p>
                 <p className="text-[10px] font-mono text-slate-400">
-                  {em.latitude.toFixed(4)}, {em.longitude.toFixed(4)}
+                  {em.latitude != null && em.longitude != null
+                    ? `${Number(em.latitude).toFixed(4)}, ${Number(em.longitude).toFixed(4)}`
+                    : '--'}
                 </p>
               </td>
 

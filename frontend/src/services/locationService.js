@@ -1,4 +1,10 @@
 import { getNearbyAssistance, reverseGeocode } from './locationApi';
+import {
+  getNearbyAssistance as getNearbyAssistanceSvc,
+  getNearbyShelters as getNearbySheltersSvc,
+  getNearbyResources as getNearbyResourcesSvc,
+  getNearbyRescueTeams as getNearbyRescueTeamsSvc,
+} from './nearbyService';
 
 export const EARTH_RADIUS_KM = 6371.0;
 
@@ -59,37 +65,38 @@ export const estimateETA = (distKm, speedKmh = 35) => {
 };
 
 /**
- * Gets high-accuracy current user GPS coordinates via browser Geolocation API
+ * Gets real current user GPS coordinates via browser Geolocation API
+ * Uses enableHighAccuracy: true, timeout: 10000ms, maximumAge: 0
  */
-export const getCurrentPosition = () => {
+export const getCurrentLocation = () => {
   return new Promise((resolve, reject) => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      reject(new Error('Geolocation is not supported by your browser environment.'));
+      reject(new Error('Your browser does not support location services.'));
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         resolve({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
           accuracy: Math.round(position.coords.accuracy || 10),
           timestamp: position.timestamp || Date.now(),
         });
       },
       (error) => {
-        let msg = 'Failed to obtain GPS position.';
+        let msg = 'Unable to determine your current location.';
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            msg = 'Location permission was denied. Please allow location access to find help near you.';
+            msg = 'Location permission was denied. Please allow location access in your browser settings to find nearby shelters and resources.';
             break;
           case error.POSITION_UNAVAILABLE:
-            msg = 'GPS signal is currently unavailable on your device.';
+            msg = 'Unable to determine your current location. Please check GPS/location services and try again.';
             break;
           case error.TIMEOUT:
-            msg = 'GPS request timed out. Retrying position fix...';
+            msg = 'Location detection timed out. Please try again.';
             break;
           default:
             msg = error.message || msg;
@@ -101,14 +108,19 @@ export const getCurrentPosition = () => {
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 15000,
+        maximumAge: 0,
       }
     );
   });
 };
 
+export const getCurrentPosition = getCurrentLocation;
+
 /**
- * Re-export getNearbyAssistance from locationApi for backward compatibility
+ * Re-exports for nearby assistance services and reverse geocoding
  */
-export const fetchNearbyAssistance = getNearbyAssistance;
+export const fetchNearbyAssistance = getNearbyAssistanceSvc || getNearbyAssistance;
+export const getNearbyShelters = getNearbySheltersSvc;
+export const getNearbyResources = getNearbyResourcesSvc;
+export const getNearbyRescueTeams = getNearbyRescueTeamsSvc;
 export const reverseGeocodeLocation = reverseGeocode;

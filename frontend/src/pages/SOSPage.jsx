@@ -9,6 +9,7 @@ import { getNearbyAssistance } from '../services/locationApi';
 import { formatDistance, formatETA } from '../services/locationService';
 import LocationPermission from '../components/nearby/LocationPermission';
 import LocationAccuracy from '../components/nearby/LocationAccuracy';
+import LocationPickerMap from '../components/map/LocationPickerMap';
 import {
   Flame,
   MapPin,
@@ -280,30 +281,44 @@ const SOSPage = () => {
             </button>
           </div>
 
-          {/* Manual Location Input if GPS is unavailable or blocked */}
+          {/* Interactive Leaflet Map Picker for SOS positioning */}
           {showManualCoords && (
-            <div className="mt-3 p-3 rounded-lg bg-slate-50 border border-slate-200 grid grid-cols-2 gap-3 w-full max-w-sm text-left">
-              <div>
-                <label className="block text-[10px] font-semibold text-slate-600 mb-0.5">Latitude</label>
-                <input
-                  type="number"
-                  step="any"
-                  placeholder="e.g. 9.9312"
-                  value={manualLat}
-                  onChange={(e) => setManualLat(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-800"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-semibold text-slate-600 mb-0.5">Longitude</label>
-                <input
-                  type="number"
-                  step="any"
-                  placeholder="e.g. 76.2673"
-                  value={manualLon}
-                  onChange={(e) => setManualLon(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-800"
-                />
+            <div className="mt-3 w-full max-w-xl text-left bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
+              <LocationPickerMap
+                latitude={manualLat || currentGpsLocation?.lat}
+                longitude={manualLon || currentGpsLocation?.lon}
+                height="220px"
+                onChange={({ latitude, longitude }) => {
+                  setManualLat(String(latitude));
+                  setManualLon(String(longitude));
+                  getNearbyAssistance(latitude, longitude, 5.0)
+                    .then((res) => setNearbyPreview(res.data))
+                    .catch(() => {});
+                }}
+              />
+              <div className="grid grid-cols-2 gap-3 text-left">
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-600 mb-0.5">Latitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="e.g. 9.9312"
+                    value={manualLat}
+                    onChange={(e) => setManualLat(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-600 mb-0.5">Longitude</label>
+                  <input
+                    type="number"
+                    step="any"
+                    placeholder="e.g. 76.2673"
+                    value={manualLon}
+                    onChange={(e) => setManualLon(e.target.value)}
+                    className="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs text-slate-800"
+                  />
+                </div>
               </div>
             </div>
           )}

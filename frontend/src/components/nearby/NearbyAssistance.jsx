@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useCurrentLocation from '../../hooks/useCurrentLocation';
-import { getNearbyAssistance } from '../../services/locationApi';
+import { getNearbyAssistance } from '../../services/nearbyService';
 import { useWebSocket } from '../../context/WebSocketContext';
 import { useOffline } from '../../context/OfflineContext';
 import CurrentLocation from './CurrentLocation';
@@ -32,9 +32,9 @@ const NearbyAssistance = () => {
   const {
     location,
     locationName,
-    isLocating,
+    loading: isLocating,
     error: locationError,
-    permissionStatus,
+    permission: permissionStatus,
     lastUpdated,
     isLiveTracking,
     refreshLocation,
@@ -79,17 +79,30 @@ const NearbyAssistance = () => {
   };
 
   useEffect(() => {
-    if (location?.lat !== undefined && location?.lon !== undefined) {
+    if (location?.latitude !== undefined && location?.longitude !== undefined) {
+      loadNearby(location.latitude, location.longitude, radius);
+    } else if (location?.lat !== undefined && location?.lon !== undefined) {
       loadNearby(location.lat, location.lon, radius);
     }
-  }, [location?.lat, location?.lon, radius]);
+  }, [location?.latitude, location?.longitude, location?.lat, location?.lon, radius]);
 
   const handleManualRefresh = async () => {
     const updated = await refreshLocation();
-    if (updated?.lat !== undefined && updated?.lon !== undefined) {
-      await loadNearby(updated.lat, updated.lon, radius);
+    const lat = updated?.latitude || updated?.lat;
+    const lon = updated?.longitude || updated?.lon;
+    if (lat !== undefined && lon !== undefined) {
+      await loadNearby(lat, lon, radius);
       addToast('Location Updated', 'Refreshed GPS coordinates and nearby assistance data.', 'info');
     }
+  };
+
+  const handleExpandRadius = () => {
+    setRadius((prev) => {
+      if (prev < 3.0) return 3.0;
+      if (prev < 5.0) return 5.0;
+      if (prev < 10.0) return 10.0;
+      return 25.0;
+    });
   };
 
   const handleDispatchSquad = async (e) => {
@@ -111,15 +124,15 @@ const NearbyAssistance = () => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      {/* Location Permission / Blocked Banner */}
-      {permissionStatus === 'denied' && (
+      {/* Location Permission / Action Banner if not granted yet */}
+      {(!location?.lat && !location?.latitude) || permissionStatus !== 'granted' ? (
         <LocationPermission
           permissionStatus={permissionStatus}
           error={locationError}
           onRetry={handleManualRefresh}
           isLocating={isLocating}
         />
-      )}
+      ) : null}
 
       {/* Offline Notice Banner */}
       {(!isOnline || isOfflineCached) && (
@@ -127,7 +140,7 @@ const NearbyAssistance = () => {
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
             <span>
-              <strong>OFFLINE — CACHED ASSISTANCE DATA:</strong> Showing locally saved resources, shelters, and teams.
+              <strong>OFFLINE — SHOWING CACHED ASSISTANCE DATA:</strong> Showing locally saved resources, shelters, and teams.
             </span>
           </div>
           {cachedAt && (
@@ -174,7 +187,9 @@ const NearbyAssistance = () => {
                     {aiRecs.recommended_team.distance_km} km
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-600">{aiRecs.recommended_team.reason}</p>
+                <p className="text-[11px] text-slate-600">
+                  {aiRecs.recommended_team.reasons?.join(' • ') || 'Closest available emergency response unit.'}
+                </p>
               </div>
             )}
 
@@ -189,7 +204,9 @@ const NearbyAssistance = () => {
                     {aiRecs.recommended_shelter.distance_km} km ({aiRecs.recommended_shelter.available_capacity} free beds)
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-600">{aiRecs.recommended_shelter.reason}</p>
+                <p className="text-[11px] text-slate-600">
+                  {aiRecs.recommended_shelter.reasons?.join(' • ') || 'Nearest open relief shelter with capacity.'}
+                </p>
               </div>
             )}
           </div>
@@ -232,12 +249,14 @@ const NearbyAssistance = () => {
 
       {/* 5. Detailed Lists */}
       {isLoading ? (
-        <Loading text="Scanning nearby rescue teams, shelters, and supplies for your coordinates..." />
+        <Loading text="🔎 Finding nearby assistance around your current location..." />
       ) : (
         <div className="space-y-6">
           {(activeTab === 'all' || activeTab === 'teams') && (
             <NearbyTeams
               teams={nearbyData?.rescue_teams || []}
+              radiusKm={radius}
+              onExpandRadius={handleExpandRadius}
               onRequestTeam={(team) => setSelectedTeam(team)}
             />
           )}
@@ -245,6 +264,8 @@ const NearbyAssistance = () => {
           {(activeTab === 'all' || activeTab === 'resources') && (
             <NearbyResources
               resources={nearbyData?.resources || []}
+              radiusKm={radius}
+              onExpandRadius={handleExpandRadius}
               onRequestResource={(item) =>
                 addToast('Supply Requested', `Requested ${item.name} from ${item.location_name}`, 'info')
               }
@@ -254,6 +275,8 @@ const NearbyAssistance = () => {
           {(activeTab === 'all' || activeTab === 'shelters') && (
             <NearbyShelters
               shelters={nearbyData?.shelters || []}
+              radiusKm={radius}
+              onExpandRadius={handleExpandRadius}
             />
           )}
         </div>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
 import MapView from '../components/map/MapView';
 import Modal from '../components/common/Modal';
 import Loading from '../components/common/Loading';
@@ -33,6 +35,7 @@ const DISASTER_TYPES = [
 ];
 
 const DisastersPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [disasters, setDisasters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,8 +47,8 @@ const DisastersPage = () => {
     type: 'flood',
     description: '',
     affected_area: '',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    latitude: '',
+    longitude: '',
     risk_level: 'high',
     is_active: true,
   });
@@ -73,15 +76,25 @@ const DisastersPage = () => {
     fetchDisasters();
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setEditingDisaster(null);
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
     setFormData({
       name: '',
       type: 'flood',
       description: '',
       affected_area: '',
-      latitude: 8.5241,
-      longitude: 76.9366,
+      latitude: initialLat,
+      longitude: initialLon,
       risk_level: 'high',
       is_active: true,
     });
@@ -334,7 +347,7 @@ const DisastersPage = () => {
               required
               value={formData.affected_area}
               onChange={(e) => setFormData({ ...formData, affected_area: e.target.value })}
-              placeholder="e.g., Thiruvananthapuram Low-lying Coastal Belt"
+              placeholder="e.g., Coastal Lowland River Flood Basin"
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />
           </div>

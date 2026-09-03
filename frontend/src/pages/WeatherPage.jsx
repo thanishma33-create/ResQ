@@ -18,9 +18,13 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
+
 const ALERT_LEVELS = ['ADVISORY', 'WATCH', 'WARNING', 'SEVERE_WARNING'];
 
 const WeatherPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [alerts, setAlerts] = useState([]);
   const [currentWeather, setCurrentWeather] = useState(null);
   const [riskAssessment, setRiskAssessment] = useState(null);
@@ -30,9 +34,9 @@ const WeatherPage = () => {
   // Modal
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState({
-    location_name: 'Thiruvananthapuram Urban District',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    location_name: '',
+    latitude: '',
+    longitude: '',
     weather_condition: 'Heavy Monsoonal Rain',
     temperature: 27.5,
     rainfall_mm: 120.5,
@@ -340,7 +344,7 @@ const WeatherPage = () => {
               required
               value={formData.location_name}
               onChange={(e) => setFormData({ ...formData, location_name: e.target.value })}
-              placeholder="Thiruvananthapuram Coastal Sector"
+              placeholder="e.g., Coastal Weather Sector 4"
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />
           </div>

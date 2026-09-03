@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
 import Modal from '../components/common/Modal';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -18,6 +20,7 @@ import {
 } from 'lucide-react';
 
 const BroadcastsPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [broadcasts, setBroadcasts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,9 +30,9 @@ const BroadcastsPage = () => {
     title: '',
     message: '',
     severity: 'HIGH',
-    target_area: 'Thiruvananthapuram District & Coastal Areas',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    target_area: '',
+    latitude: '',
+    longitude: '',
     radius_km: 25.0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,8 +61,8 @@ const BroadcastsPage = () => {
 
   const handleCreateBroadcast = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.message) {
-      setFormError('Please enter both title and broadcast message.');
+    if (!formData.title || !formData.message || !formData.target_area) {
+      setFormError('Please fill out all required fields.');
       return;
     }
 
@@ -68,15 +71,39 @@ const BroadcastsPage = () => {
 
     try {
       await axiosClient.post('/api/broadcasts/', formData);
-      addToast('Emergency Broadcast Issued', `Broadcast "${formData.title}" published live.`, 'danger');
       setShowCreateModal(false);
+      addToast('Emergency Broadcast Sent', `Alert transmitted to ${formData.target_area}`, 'danger');
       fetchBroadcasts();
     } catch (err) {
-      console.error('Broadcast failed:', err);
-      setFormError(err.response?.data?.detail || 'Failed to issue broadcast.');
+      console.error('Failed to create broadcast:', err);
+      setFormError(err.response?.data?.detail || 'Failed to transmit broadcast alert.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleOpenCreateModal = async () => {
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
+    setFormData({
+      title: '',
+      message: '',
+      severity: 'HIGH',
+      target_area: '',
+      latitude: initialLat,
+      longitude: initialLon,
+      radius_km: 25.0,
+    });
+    setFormError('');
+    setShowCreateModal(true);
   };
 
   const handleDelete = async (id, title) => {
@@ -120,19 +147,7 @@ const BroadcastsPage = () => {
 
           {hasRole(['admin', 'operator']) && (
             <button
-              onClick={() => {
-                setFormData({
-                  title: '',
-                  message: '',
-                  severity: 'HIGH',
-                  target_area: 'Thiruvananthapuram District & Coastal Areas',
-                  latitude: 8.5241,
-                  longitude: 76.9366,
-                  radius_km: 25.0,
-                });
-                setFormError('');
-                setShowCreateModal(true);
-              }}
+              onClick={handleOpenCreateModal}
               className="px-4 py-2 rounded-lg text-xs font-semibold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors flex items-center gap-2"
             >
               <Megaphone className="w-4 h-4" />

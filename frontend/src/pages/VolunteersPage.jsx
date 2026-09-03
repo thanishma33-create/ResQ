@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
 import StatusBadge from '../components/common/StatusBadge';
 import Modal from '../components/common/Modal';
 import Loading from '../components/common/Loading';
@@ -28,6 +30,7 @@ const SKILL_OPTIONS = [
 ];
 
 const VolunteersPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [volunteers, setVolunteers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,9 +45,9 @@ const VolunteersPage = () => {
     email: '',
     phone: '',
     skills: [],
-    latitude: 8.5241,
-    longitude: 76.9366,
-    address: 'Kowdiar, Trivandrum',
+    latitude: '',
+    longitude: '',
+    address: '',
     availability: 'AVAILABLE',
     max_tasks: 3,
   });
@@ -72,16 +75,26 @@ const VolunteersPage = () => {
     fetchVolunteers();
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setEditingVolunteer(null);
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
     setFormData({
       name: '',
       email: '',
       phone: '',
       skills: ['First Aid & Triage'],
-      latitude: 8.5241,
-      longitude: 76.9366,
-      address: 'Kowdiar, Trivandrum',
+      latitude: initialLat,
+      longitude: initialLon,
+      address: '',
       availability: 'AVAILABLE',
       max_tasks: 3,
     });
@@ -251,7 +264,7 @@ const VolunteersPage = () => {
                     <h4 className="text-sm font-bold text-slate-900">{v.name}</h4>
                     <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                      {v.address || 'Trivandrum'}
+                      {v.address || 'Local Volunteer Base'}
                     </p>
                   </div>
                   <StatusBadge status={v.availability} size="sm" />
@@ -377,7 +390,7 @@ const VolunteersPage = () => {
                 type="text"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Pattom, Trivandrum"
+                placeholder="e.g., North District, Kerala"
                 className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
               />
             </div>

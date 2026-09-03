@@ -86,7 +86,7 @@ def seed_database():
         print("[INFO] Seeding active disaster events...")
         disasters_data = [
             {
-                "name": "Monsoon Flash Flood – Karamana River Basin",
+                "name": "Monsoon Flash Flood - Karamana River Basin",
                 "type": "flood",
                 "description": "Intense torrential monsoon precipitation causing rapid water level rise and inundation in low-lying riverside communities.",
                 "affected_area": "Karamana, Maruthankuzhy, Jagathy & Attukal",
@@ -96,13 +96,43 @@ def seed_database():
                 "is_active": True
             },
             {
-                "name": "Western Ghats Landslide Threat – Ponmudi Hills",
+                "name": "Western Ghats Landslide Threat - Ponmudi Hills",
                 "type": "landslide",
                 "description": "Continuous downpours causing soil saturation and slope failure risks along Ponmudi mountain passes.",
                 "affected_area": "Ponmudi, Vithura & Kallar",
                 "latitude": 8.7600,
                 "longitude": 77.1167,
                 "risk_level": "critical",
+                "is_active": True
+            },
+            {
+                "name": "Periyar River Inundation & Industrial Zone Surge - Kochi",
+                "type": "flood",
+                "description": "High tide backwater surge and heavy reservoir discharge flooding coastal and low-lying urban pockets of Ernakulam and Kochi.",
+                "affected_area": "Marine Drive, Fort Kochi, Kakkanad & Aluva",
+                "latitude": 9.9312,
+                "longitude": 76.2673,
+                "risk_level": "high",
+                "is_active": True
+            },
+            {
+                "name": "Ashtamudi Lake Coastal Surge & Estuary Alert - Kollam",
+                "type": "flood",
+                "description": "Heavy sea-swell and lake overflow threatening coastal fishing villages and low-lying wetlands.",
+                "affected_area": "Kollam Beach, Chinnakada & Ashramam",
+                "latitude": 8.8932,
+                "longitude": 76.6141,
+                "risk_level": "medium",
+                "is_active": True
+            },
+            {
+                "name": "Kuttanad Lowland Submergence - Alappuzha",
+                "type": "flood",
+                "description": "Severe waterlogging across below-sea-level paddy wetlands and water corridors in Kuttanad basin.",
+                "affected_area": "Kuttanad, Alappuzha Town & Champakulam",
+                "latitude": 9.4981,
+                "longitude": 76.3388,
+                "risk_level": "high",
                 "is_active": True
             }
         ]
@@ -120,10 +150,11 @@ def seed_database():
                 created_disasters.append(existing)
 
         # 3. RESCUE TEAMS
-        print("[INFO] Seeding response teams...")
+        print("[INFO] Seeding response teams across regions...")
         teams_data = [
+            # Thiruvananthapuram Teams
             {
-                "name": "NDRF Unit 04 – Flood & Marine Rescue",
+                "name": "NDRF Unit 04 - Flood & Marine Rescue",
                 "team_leader": "Capt. Rajesh Nair",
                 "contact_phone": "+91 94471 00101",
                 "specialty": "flood_rescue",
@@ -141,7 +172,7 @@ def seed_database():
                 "specialty": "search_rescue",
                 "latitude": 8.5085,
                 "longitude": 76.9538,
-                "base_location": "Chenthitta Fire HQ",
+                "base_location": "Chenthitta Fire HQ, Thiruvananthapuram",
                 "status": "AVAILABLE",
                 "max_capacity": 12
             },
@@ -163,9 +194,67 @@ def seed_database():
                 "specialty": "medical",
                 "latitude": 8.5200,
                 "longitude": 76.9400,
-                "base_location": "General Hospital Base",
+                "base_location": "General Hospital Base, Thiruvananthapuram",
                 "status": "AVAILABLE",
                 "max_capacity": 10
+            },
+            # Kochi / Ernakulam Teams
+            {
+                "name": "Kochi Coastal & Harbour Rescue Squad",
+                "team_leader": "Commander Vivek S.",
+                "contact_phone": "+91 94472 00201",
+                "specialty": "boat_rescue",
+                "latitude": 9.9312,
+                "longitude": 76.2673,
+                "base_location": "Marine Drive Jetty, Kochi",
+                "status": "AVAILABLE",
+                "max_capacity": 14
+            },
+            {
+                "name": "Ernakulam Emergency Rapid Action Team",
+                "team_leader": "Officer George Mathew",
+                "contact_phone": "+91 94472 00202",
+                "specialty": "search_rescue",
+                "latitude": 9.9816,
+                "longitude": 76.2999,
+                "base_location": "Kaloor Fire Station, Kochi",
+                "status": "AVAILABLE",
+                "max_capacity": 12
+            },
+            # Kollam Teams
+            {
+                "name": "Kollam Port Marine Disaster Response Force",
+                "team_leader": "Capt. Harikumar",
+                "contact_phone": "+91 94473 00301",
+                "specialty": "boat_rescue",
+                "latitude": 8.8932,
+                "longitude": 76.6141,
+                "base_location": "Port Operations Command, Kollam",
+                "status": "AVAILABLE",
+                "max_capacity": 10
+            },
+            {
+                "name": "Kollam Civil Defense Rescue Unit",
+                "team_leader": "Insp. Abdul Rasheed",
+                "contact_phone": "+91 94473 00302",
+                "specialty": "general_rescue",
+                "latitude": 8.8856,
+                "longitude": 76.5864,
+                "base_location": "Beach Road Station, Kollam",
+                "status": "AVAILABLE",
+                "max_capacity": 8
+            },
+            # Alappuzha Teams
+            {
+                "name": "Alappuzha Water Ambulance & Lowland Squad",
+                "team_leader": "Capt. Somanath P.",
+                "contact_phone": "+91 94474 00401",
+                "specialty": "flood_rescue",
+                "latitude": 9.4981,
+                "longitude": 76.3388,
+                "base_location": "Finishing Point Boat Jetty, Alappuzha",
+                "status": "AVAILABLE",
+                "max_capacity": 12
             }
         ]
 
@@ -176,8 +265,9 @@ def seed_database():
                 db.commit()
 
         # 4. VOLUNTEERS
-        print("[INFO] Seeding volunteer network...")
+        print("[INFO] Seeding volunteer network across regions...")
         volunteers_data = [
+            # Trivandrum Volunteers
             {
                 "name": "Dr. Ananya Nair",
                 "email": "ananya.nair@resq.org",
@@ -208,42 +298,56 @@ def seed_database():
                 "skills": json.dumps(["food_distribution", "logistics"]),
                 "latitude": 8.4980,
                 "longitude": 76.9700,
-                "address": "Karamana River Road",
+                "address": "Karamana River Road, Thiruvananthapuram",
                 "availability": "AVAILABLE",
                 "rating": 5.0
             },
+            # Kochi Volunteers
             {
-                "name": "Vishnu Prasad",
-                "email": "vishnu.p@resq.org",
-                "phone": "+91 98470 11004",
-                "skills": json.dumps(["search_rescue", "driving"]),
-                "latitude": 8.4800,
-                "longitude": 76.9500,
-                "address": "Thiruvallam",
-                "availability": "AVAILABLE",
-                "rating": 4.7
-            },
-            {
-                "name": "Meera Varma",
-                "email": "meera.v@resq.org",
-                "phone": "+91 98470 11005",
-                "skills": json.dumps(["communication", "translation", "medical"]),
-                "latitude": 8.5400,
-                "longitude": 76.9600,
-                "address": "Sasthamangalam",
+                "name": "Deepak Menon",
+                "email": "deepak.m@resq.org",
+                "phone": "+91 98470 22001",
+                "skills": json.dumps(["driving", "search_rescue", "boat_driving"]),
+                "latitude": 9.9320,
+                "longitude": 76.2680,
+                "address": "Marine Drive Walkway, Kochi",
                 "availability": "AVAILABLE",
                 "rating": 4.9
             },
             {
-                "name": "Arun Kumar",
-                "email": "arun.k@resq.org",
-                "phone": "+91 98470 11006",
-                "skills": json.dumps(["first_aid", "food_distribution"]),
-                "latitude": 8.5050,
-                "longitude": 76.9300,
-                "address": "Manacaud",
+                "name": "Dr. Archana Pillai",
+                "email": "archana.p@resq.org",
+                "phone": "+91 98470 22002",
+                "skills": json.dumps(["medical", "first_aid", "trauma_care"]),
+                "latitude": 9.9820,
+                "longitude": 76.3010,
+                "address": "Kaloor-Kadavanthra Road, Kochi",
                 "availability": "AVAILABLE",
-                "rating": 4.6
+                "rating": 5.0
+            },
+            # Kollam Volunteers
+            {
+                "name": "Bipin Chandran",
+                "email": "bipin.c@resq.org",
+                "phone": "+91 98470 33001",
+                "skills": json.dumps(["logistics", "food_distribution"]),
+                "latitude": 8.8920,
+                "longitude": 76.6130,
+                "address": "Ashramam, Kollam",
+                "availability": "AVAILABLE",
+                "rating": 4.8
+            },
+            # Alappuzha Volunteers
+            {
+                "name": "Jithin Thomas",
+                "email": "jithin.t@resq.org",
+                "phone": "+91 98470 44001",
+                "skills": json.dumps(["boat_rescue", "swimming", "first_aid"]),
+                "latitude": 9.4990,
+                "longitude": 76.3370,
+                "address": "Finishing Point Road, Alappuzha",
+                "availability": "AVAILABLE",
+                "rating": 4.9
             }
         ]
 
@@ -254,10 +358,11 @@ def seed_database():
                 db.commit()
 
         # 5. RESOURCES
-        print("[INFO] Seeding resource inventory...")
+        print("[INFO] Seeding resource inventory across regions...")
         resources_data = [
+            # Thiruvananthapuram Resources
             {
-                "name": "Clean Bottled Drinking Water",
+                "name": "Clean Bottled Drinking Water (TVM)",
                 "category": "water",
                 "unit": "liters",
                 "total_quantity": 10000,
@@ -265,10 +370,10 @@ def seed_database():
                 "allocated_quantity": 800,
                 "latitude": 8.5241,
                 "longitude": 76.9366,
-                "location_name": "Central Palayam Disaster Depot"
+                "location_name": "Central Palayam Disaster Depot, Thiruvananthapuram"
             },
             {
-                "name": "Emergency Ready-to-Eat Meal Rations",
+                "name": "Emergency Ready-to-Eat Meal Rations (TVM)",
                 "category": "food",
                 "unit": "packets",
                 "total_quantity": 6000,
@@ -276,10 +381,10 @@ def seed_database():
                 "allocated_quantity": 600,
                 "latitude": 8.5241,
                 "longitude": 76.9366,
-                "location_name": "Central Palayam Disaster Depot"
+                "location_name": "Central Palayam Disaster Depot, Thiruvananthapuram"
             },
             {
-                "name": "Trauma & Emergency First Aid Kits",
+                "name": "Trauma & Emergency First Aid Kits (TVM)",
                 "category": "first_aid",
                 "unit": "kits",
                 "total_quantity": 400,
@@ -287,10 +392,10 @@ def seed_database():
                 "allocated_quantity": 30,
                 "latitude": 8.5200,
                 "longitude": 76.9400,
-                "location_name": "Medical College Health Depot"
+                "location_name": "Medical College Health Depot, Thiruvananthapuram"
             },
             {
-                "name": "Motorized Inflatable Rescue Boats",
+                "name": "Motorized Inflatable Rescue Boats (Varkala)",
                 "category": "boats",
                 "unit": "boats",
                 "total_quantity": 20,
@@ -301,18 +406,7 @@ def seed_database():
                 "location_name": "Varkala Coastal Command"
             },
             {
-                "name": "Safety Life Jackets (Adult & Child)",
-                "category": "life_jackets",
-                "unit": "units",
-                "total_quantity": 800,
-                "available_quantity": 740,
-                "allocated_quantity": 60,
-                "latitude": 8.7379,
-                "longitude": 76.7163,
-                "location_name": "Varkala Coastal Command"
-            },
-            {
-                "name": "Heavy Thermal Blankets & Bedding",
+                "name": "Heavy Thermal Blankets & Bedding (TVM)",
                 "category": "blankets",
                 "unit": "units",
                 "total_quantity": 2500,
@@ -320,29 +414,120 @@ def seed_database():
                 "allocated_quantity": 300,
                 "latitude": 8.5085,
                 "longitude": 76.9538,
-                "location_name": "Chenthitta Relief Logistics Center"
+                "location_name": "Chenthitta Relief Logistics Center, Thiruvananthapuram"
+            },
+            # Kochi / Ernakulam Resources
+            {
+                "name": "Drinking Water Supply Reserve (Kochi)",
+                "category": "water",
+                "unit": "liters",
+                "total_quantity": 8000,
+                "available_quantity": 7500,
+                "allocated_quantity": 500,
+                "latitude": 9.9312,
+                "longitude": 76.2673,
+                "location_name": "Ernakulam Marine Center Depot, Kochi"
             },
             {
-                "name": "Hydraulic Debris Spreaders & Chainsaws",
-                "category": "rescue_equipment",
-                "unit": "sets",
-                "total_quantity": 30,
-                "available_quantity": 28,
-                "allocated_quantity": 2,
-                "latitude": 8.5085,
-                "longitude": 76.9538,
-                "location_name": "Chenthitta Fire Depot"
+                "name": "Emergency Food Rations Packets (Kochi)",
+                "category": "food",
+                "unit": "packets",
+                "total_quantity": 5000,
+                "available_quantity": 4600,
+                "allocated_quantity": 400,
+                "latitude": 9.9312,
+                "longitude": 76.2673,
+                "location_name": "Ernakulam Marine Center Depot, Kochi"
             },
             {
-                "name": "Essential Emergency Medicines & Antibiotics",
+                "name": "Water Rescue Inflatable Boats (Kochi)",
+                "category": "boats",
+                "unit": "boats",
+                "total_quantity": 15,
+                "available_quantity": 12,
+                "allocated_quantity": 3,
+                "latitude": 9.9340,
+                "longitude": 76.2650,
+                "location_name": "Fort Kochi Coastal Depot"
+            },
+            {
+                "name": "Safety Life Jackets Marine (Kochi)",
+                "category": "life_jackets",
+                "unit": "units",
+                "total_quantity": 600,
+                "available_quantity": 550,
+                "allocated_quantity": 50,
+                "latitude": 9.9340,
+                "longitude": 76.2650,
+                "location_name": "Fort Kochi Coastal Depot"
+            },
+            {
+                "name": "Emergency Medical Aid & Antibiotics (Kochi)",
                 "category": "medicine",
                 "unit": "boxes",
-                "total_quantity": 500,
-                "available_quantity": 480,
-                "allocated_quantity": 20,
-                "latitude": 8.5200,
-                "longitude": 76.9400,
-                "location_name": "District Health Store"
+                "total_quantity": 350,
+                "available_quantity": 320,
+                "allocated_quantity": 30,
+                "latitude": 9.9816,
+                "longitude": 76.2999,
+                "location_name": "Kaloor Health Supply Store, Kochi"
+            },
+            # Kollam Resources
+            {
+                "name": "Potable Water Emergency Cans (Kollam)",
+                "category": "water",
+                "unit": "liters",
+                "total_quantity": 6000,
+                "available_quantity": 5800,
+                "allocated_quantity": 200,
+                "latitude": 8.8932,
+                "longitude": 76.6141,
+                "location_name": "Chinnakada Disaster Warehouse, Kollam"
+            },
+            {
+                "name": "Relief Meal Packs & Nutrition (Kollam)",
+                "category": "food",
+                "unit": "packets",
+                "total_quantity": 4000,
+                "available_quantity": 3800,
+                "allocated_quantity": 200,
+                "latitude": 8.8932,
+                "longitude": 76.6141,
+                "location_name": "Chinnakada Disaster Warehouse, Kollam"
+            },
+            {
+                "name": "Coastal Rescue Life Jackets (Kollam)",
+                "category": "life_jackets",
+                "unit": "units",
+                "total_quantity": 450,
+                "available_quantity": 420,
+                "allocated_quantity": 30,
+                "latitude": 8.8856,
+                "longitude": 76.5864,
+                "location_name": "Kollam Port Storage Hub"
+            },
+            # Alappuzha Resources
+            {
+                "name": "Flood Zone Clean Drinking Water (Alappuzha)",
+                "category": "water",
+                "unit": "liters",
+                "total_quantity": 7000,
+                "available_quantity": 6400,
+                "allocated_quantity": 600,
+                "latitude": 9.4981,
+                "longitude": 76.3388,
+                "location_name": "Alappuzha Town Relief Depot"
+            },
+            {
+                "name": "Kuttanad Inflatable Rescue Boats (Alappuzha)",
+                "category": "boats",
+                "unit": "boats",
+                "total_quantity": 18,
+                "available_quantity": 15,
+                "allocated_quantity": 3,
+                "latitude": 9.4981,
+                "longitude": 76.3388,
+                "location_name": "Finishing Point Depot, Alappuzha"
             }
         ]
 
@@ -353,8 +538,9 @@ def seed_database():
                 db.commit()
 
         # 6. SHELTERS
-        print("[INFO] Seeding evacuation shelters...")
+        print("[INFO] Seeding evacuation shelters across regions...")
         shelters_data = [
+            # Thiruvananthapuram Shelters
             {
                 "name": "Government Model Higher Secondary School Relief Camp",
                 "address": "Thycaud, Palayam, Thiruvananthapuram",
@@ -370,40 +556,6 @@ def seed_database():
                 "is_accessible": True,
                 "contact_person": "Principal Radhakrishnan",
                 "contact_phone": "+91 94471 22331",
-                "status": "OPEN"
-            },
-            {
-                "name": "Neyyattinkara Municipal Community Shelter",
-                "address": "Hospital Road, Neyyattinkara",
-                "latitude": 8.4011,
-                "longitude": 77.0863,
-                "capacity": 250,
-                "occupied": 195,
-                "available_capacity": 55,
-                "has_medical_facility": True,
-                "has_food": True,
-                "has_water": True,
-                "has_electricity": True,
-                "is_accessible": True,
-                "contact_person": "Councilor Binu Thomas",
-                "contact_phone": "+91 94471 22332",
-                "status": "OPEN"
-            },
-            {
-                "name": "Nedumangad Town Evacuation Camp",
-                "address": "Near KSRTC Depot, Nedumangad",
-                "latitude": 8.6015,
-                "longitude": 77.0016,
-                "capacity": 200,
-                "occupied": 75,
-                "available_capacity": 125,
-                "has_medical_facility": False,
-                "has_food": True,
-                "has_water": True,
-                "has_electricity": True,
-                "is_accessible": True,
-                "contact_person": "Smt. Shailaja Teacher",
-                "contact_phone": "+91 94471 22333",
                 "status": "OPEN"
             },
             {
@@ -423,21 +575,75 @@ def seed_database():
                 "contact_phone": "+91 94471 22334",
                 "status": "OPEN"
             },
+            # Kochi Shelters
             {
-                "name": "Varkala Cliffside Disaster Refuge",
-                "address": "Helipad Road, North Cliff, Varkala",
-                "latitude": 8.7379,
-                "longitude": 76.7163,
-                "capacity": 150,
-                "occupied": 30,
-                "available_capacity": 120,
-                "has_medical_facility": False,
+                "name": "Kochi Marine Drive Community Evacuation Camp",
+                "address": "Shanmugham Road, Marine Drive, Kochi",
+                "latitude": 9.9325,
+                "longitude": 76.2690,
+                "capacity": 450,
+                "occupied": 180,
+                "available_capacity": 270,
+                "has_medical_facility": True,
                 "has_food": True,
                 "has_water": True,
                 "has_electricity": True,
                 "is_accessible": True,
-                "contact_person": "Mr. Salim Varkala",
-                "contact_phone": "+91 94471 22335",
+                "contact_person": "District Officer Suresh Nair",
+                "contact_phone": "+91 94472 33441",
+                "status": "OPEN"
+            },
+            {
+                "name": "Ernakulam Town Hall Relief Shelter",
+                "address": "Banerji Road, Kaloor, Kochi",
+                "latitude": 9.9830,
+                "longitude": 76.2980,
+                "capacity": 300,
+                "occupied": 90,
+                "available_capacity": 210,
+                "has_medical_facility": True,
+                "has_food": True,
+                "has_water": True,
+                "has_electricity": True,
+                "is_accessible": True,
+                "contact_person": "Mrs. Mini George",
+                "contact_phone": "+91 94472 33442",
+                "status": "OPEN"
+            },
+            # Kollam Shelters
+            {
+                "name": "Kollam Beachfront Relief Complex",
+                "address": "Beach Road, Pallithottam, Kollam",
+                "latitude": 8.8910,
+                "longitude": 76.6120,
+                "capacity": 400,
+                "occupied": 150,
+                "available_capacity": 250,
+                "has_medical_facility": True,
+                "has_food": True,
+                "has_water": True,
+                "has_electricity": True,
+                "is_accessible": True,
+                "contact_person": "Mr. Shibu Kumar",
+                "contact_phone": "+91 94473 44551",
+                "status": "OPEN"
+            },
+            # Alappuzha Shelters
+            {
+                "name": "Alappuzha SDV Relief Camp",
+                "address": "Near Canal Bridge, Alappuzha Town",
+                "latitude": 9.4975,
+                "longitude": 76.3380,
+                "capacity": 350,
+                "occupied": 140,
+                "available_capacity": 210,
+                "has_medical_facility": True,
+                "has_food": True,
+                "has_water": True,
+                "has_electricity": True,
+                "is_accessible": True,
+                "contact_person": "Fr. Mathew Varghese",
+                "contact_phone": "+91 94474 55661",
                 "status": "OPEN"
             }
         ]
@@ -449,11 +655,12 @@ def seed_database():
                 db.commit()
 
         # 7. EMERGENCIES
-        print("[INFO] Seeding emergency incidents with AI Priority scoring...")
+        print("[INFO] Seeding emergency incidents across regions...")
         sample_emergencies = [
+            # TVM Emergency
             {
                 "emergency_type": "flood_trapped",
-                "description": "6 family members trapped on terrace as Karamana river floodwaters reached 8ft ground floor depth. 2 children and 1 elderly person need boat rescue.",
+                "description": "6 family members trapped on terrace as Karamana river floodwaters reached ground floor. Need boat rescue.",
                 "latitude": 8.4890,
                 "longitude": 76.9620,
                 "address": "House #42, Maruthankuzhy Riverview, Thiruvananthapuram",
@@ -471,82 +678,47 @@ def seed_database():
                 "reporter_phone": "+91 94470 99881",
                 "status": "VERIFIED"
             },
+            # Kochi Emergency
             {
-                "emergency_type": "landslide_collapse",
-                "description": "Severe hillside mudslide partially buried residential building. 2 persons injured with bone fractures, 1 elderly person trapped in rear room.",
-                "latitude": 8.7580,
-                "longitude": 77.1140,
-                "address": "Tea Estate Quarters, Ponmudi Lower Ghats",
+                "emergency_type": "flood_trapped",
+                "description": "4 residents trapped near waterfront promenade in Kochi due to backwater surge and high tide. Requesting evacuation.",
+                "latitude": 9.9315,
+                "longitude": 76.2675,
+                "address": "Marine Drive Promenade, Kochi",
                 "people_affected": 4,
-                "children": 0,
-                "elderly": 1,
-                "pregnant_persons": 0,
-                "disabled_persons": 0,
-                "injured_persons": 2,
-                "medical_required": True,
-                "trapped": True,
-                "required_resources": ["ambulances", "rescue_equipment", "first_aid"],
-                "disaster_id": created_disasters[1].id,
-                "reporter_name": "Mani K.",
-                "reporter_phone": "+91 94470 99882",
-                "status": "ASSIGNED"
-            },
-            {
-                "emergency_type": "medical_emergency",
-                "description": "Pregnant mother in advanced labor isolated due to washed-away culvert and inundated access road.",
-                "latitude": 8.6100,
-                "longitude": 77.0100,
-                "address": "Valiyavila Road, Nedumangad",
-                "people_affected": 2,
-                "children": 0,
-                "elderly": 0,
-                "pregnant_persons": 1,
-                "disabled_persons": 0,
-                "injured_persons": 0,
-                "medical_required": True,
-                "trapped": True,
-                "required_resources": ["ambulances", "first_aid"],
-                "reporter_name": "Sunil Varghese",
-                "reporter_phone": "+91 94470 99883",
-                "status": "PENDING"
-            },
-            {
-                "emergency_type": "food_water_shortage",
-                "description": "Group of 12 migrant laborers in waterlogged relief settlement lacking food and potable drinking water for 36 hours.",
-                "latitude": 8.4100,
-                "longitude": 77.0800,
-                "address": "Brick Kiln Settlement, Neyyattinkara",
-                "people_affected": 12,
-                "children": 3,
-                "elderly": 0,
-                "pregnant_persons": 0,
-                "disabled_persons": 1,
-                "injured_persons": 0,
-                "medical_required": False,
-                "trapped": False,
-                "required_resources": ["food", "water", "blankets"],
-                "reporter_name": "Babu Roy",
-                "reporter_phone": "+91 94470 99884",
-                "status": "PENDING"
-            },
-            {
-                "emergency_type": "sos_distress",
-                "description": "URGENT SOS: Vehicle caught in flash flood on Attukal bypass. Rapidly rising current.",
-                "latitude": 8.4720,
-                "longitude": 76.9550,
-                "address": "Attukal Temple Bridge Approach Road",
-                "people_affected": 3,
                 "children": 1,
-                "elderly": 0,
+                "elderly": 1,
                 "pregnant_persons": 0,
                 "disabled_persons": 0,
                 "injured_persons": 0,
                 "medical_required": False,
                 "trapped": True,
                 "required_resources": ["boats", "life_jackets"],
-                "reporter_name": "Vinod S.",
-                "reporter_phone": "+91 94470 99885",
-                "status": "EN_ROUTE"
+                "disaster_id": created_disasters[2].id,
+                "reporter_name": "Antony Joseph",
+                "reporter_phone": "+91 94472 99882",
+                "status": "PENDING"
+            },
+            # Kollam Emergency
+            {
+                "emergency_type": "sos_distress",
+                "description": "URGENT SOS: Fishing family isolated in rising water near Ashtamudi lakeside.",
+                "latitude": 8.8935,
+                "longitude": 76.6145,
+                "address": "Ashramam Lakefront, Kollam",
+                "people_affected": 3,
+                "children": 0,
+                "elderly": 1,
+                "pregnant_persons": 0,
+                "disabled_persons": 0,
+                "injured_persons": 0,
+                "medical_required": False,
+                "trapped": True,
+                "required_resources": ["boats", "life_jackets"],
+                "disaster_id": created_disasters[3].id,
+                "reporter_name": "Raghavan K.",
+                "reporter_phone": "+91 94473 99883",
+                "status": "PENDING"
             }
         ]
 
@@ -617,7 +789,7 @@ def seed_database():
             db.add(broadcast)
             db.commit()
 
-        print("[SUCCESS] Database successfully seeded with realistic Kerala disaster response data!")
+        print("[SUCCESS] Database successfully seeded with realistic multi-region Kerala disaster response data!")
 
     except Exception as e:
         db.rollback()

@@ -344,8 +344,8 @@ const EmergencyDetailPage = () => {
               emergencies={[emergency]}
             />
             <div className="text-[11px] text-slate-500 flex items-center justify-between font-mono">
-              <span>Lat: {emergency.latitude.toFixed(4)}</span>
-              <span>Lon: {emergency.longitude.toFixed(4)}</span>
+              <span>Lat: {emergency.latitude != null ? Number(emergency.latitude).toFixed(4) : '--'}</span>
+              <span>Lon: {emergency.longitude != null ? Number(emergency.longitude).toFixed(4) : '--'}</span>
             </div>
           </div>
 

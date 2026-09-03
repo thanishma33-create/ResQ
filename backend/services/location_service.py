@@ -6,6 +6,7 @@ from sqlalchemy import and_
 
 import models
 import schemas
+from services.geocoding_service import reverse_geocode
 
 EARTH_RADIUS_KM = 6371.0
 
@@ -38,6 +39,9 @@ def calculate_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> fl
     distance = EARTH_RADIUS_KM * c
 
     return round(distance, 2)
+
+# Explicit alias per system requirements
+calculate_distance_km = calculate_distance
 
 
 def get_bounding_box(lat: float, lon: float, radius_km: float) -> Tuple[float, float, float, float]:
@@ -208,6 +212,7 @@ def get_nearby_rescue_teams(
                     contact_phone=contact,
                     specialty=t.specialty,
                     status=t.status,
+                    availability=t.status,
                     members_count=t.max_capacity or 6,
                     skills=skills,
                     equipment=equipment,
@@ -229,14 +234,18 @@ def get_nearby_assistance(
     lat: float,
     lon: float,
     radius_km: float = 5.0,
+    accuracy: Optional[float] = None,
     current_user: Optional[models.User] = None
 ) -> schemas.NearbyLocationResponse:
     """
     Assembles comprehensive Nearby Assistance response for the user's current GPS location.
-    Integrates explainable AI recommendations.
+    Integrates dynamic reverse geocoding and explainable AI recommendations.
     """
     validate_coordinates(lat, lon)
     is_privileged = current_user is not None and getattr(current_user, 'role', '') in ['admin', 'operator']
+
+    # Dynamic reverse geocoding
+    loc_name = reverse_geocode(lat, lon)
 
     resources = get_nearby_resources(db, lat, lon, radius_km=radius_km, exclude_zero_stock=True)
     shelters = get_nearby_shelters(db, lat, lon, radius_km=radius_km, is_privileged=is_privileged)
@@ -335,9 +344,13 @@ def get_nearby_assistance(
         )
 
     now = datetime.datetime.now(datetime.timezone.utc)
+    user_loc_data = {"latitude": lat, "longitude": lon}
+    if accuracy is not None and accuracy >= 0:
+        user_loc_data["accuracy_m"] = round(accuracy, 1)
 
     return schemas.NearbyLocationResponse(
-        user_location={"latitude": lat, "longitude": lon},
+        user_location=user_loc_data,
+        location_name=loc_name,
         radius_km=radius_km,
         resources=resources,
         shelters=shelters,
@@ -345,5 +358,6 @@ def get_nearby_assistance(
         emergencies=emergencies,
         ai_recommendations=ai_recs,
         timestamp=now,
+        generated_at=now,
         last_updated=now
     )

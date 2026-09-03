@@ -5,7 +5,30 @@ from sqlalchemy.orm import Session
 import models
 import schemas
 
+from utils.geo import haversine_distance
+
 KERALA_WEATHER_STATIONS = [
+    {
+        "location_name": "Kochi Coastal & Harbour",
+        "latitude": 9.9312,
+        "longitude": 76.2673,
+        "base_temp": 30.5,
+        "terrain": "coastal_urban"
+    },
+    {
+        "location_name": "Kollam Port & Ashtamudi",
+        "latitude": 8.8932,
+        "longitude": 76.6141,
+        "base_temp": 30.0,
+        "terrain": "coastal_urban"
+    },
+    {
+        "location_name": "Alappuzha Kuttanad Water Basin",
+        "latitude": 9.4981,
+        "longitude": 76.3388,
+        "base_temp": 29.8,
+        "terrain": "coastal_wetland"
+    },
     {
         "location_name": "Thiruvananthapuram City",
         "latitude": 8.5241,
@@ -40,16 +63,37 @@ KERALA_WEATHER_STATIONS = [
         "longitude": 76.7163,
         "base_temp": 30.0,
         "terrain": "cliff_coast"
+    },
+    {
+        "location_name": "Wayanad Highland Passes",
+        "latitude": 11.6854,
+        "longitude": 76.1320,
+        "base_temp": 21.5,
+        "terrain": "steep_hills"
+    },
+    {
+        "location_name": "Kozhikode Malabar Coast",
+        "latitude": 11.2588,
+        "longitude": 75.7804,
+        "base_temp": 29.8,
+        "terrain": "coastal_urban"
     }
 ]
 
 def get_simulated_weather_report(location_name: Optional[str] = None, lat: Optional[float] = None, lon: Optional[float] = None) -> Dict[str, Any]:
     """
     Generates realistic, modular weather and meteorological risk analysis for Kerala stations.
+    Dynamically selects the nearest weather station if coordinates are provided.
     Explicitly tags all simulated datasets for transparency with clean extension points for live APIs.
     """
     station = KERALA_WEATHER_STATIONS[0]
-    if location_name:
+    if lat is not None and lon is not None:
+        # Find closest station by geographic distance
+        station = min(
+            KERALA_WEATHER_STATIONS,
+            key=lambda s: haversine_distance(lat, lon, s["latitude"], s["longitude"])
+        )
+    elif location_name:
         matched = next((s for s in KERALA_WEATHER_STATIONS if location_name.lower() in s["location_name"].lower()), None)
         if matched:
             station = matched

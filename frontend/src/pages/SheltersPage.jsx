@@ -24,7 +24,11 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
+
 const SheltersPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [shelters, setShelters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,8 +42,8 @@ const SheltersPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     address: '',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    latitude: '',
+    longitude: '',
     capacity: 250,
     occupied: 0,
     has_medical_facility: true,
@@ -75,13 +79,23 @@ const SheltersPage = () => {
     fetchShelters();
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setSelectedShelter(null);
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
     setFormData({
       name: '',
       address: '',
-      latitude: 8.5241,
-      longitude: 76.9366,
+      latitude: initialLat,
+      longitude: initialLon,
       capacity: 250,
       occupied: 0,
       has_medical_facility: true,
@@ -472,7 +486,7 @@ const SheltersPage = () => {
               required
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Pattom, Trivandrum"
+              placeholder="e.g., Relief Camp, North Sector"
               className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-cyan-500"
             />
           </div>

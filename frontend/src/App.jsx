@@ -112,6 +112,10 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/operational-map"
+                element={<Navigate to="/nearby" replace />}
+              />
 
               {/* SECTION 2: EMERGENCY MANAGEMENT */}
               <Route

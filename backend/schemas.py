@@ -695,6 +695,7 @@ class NearbyRescueTeam(BaseModel):
     contact_phone: Optional[str] = None
     specialty: Optional[str] = None
     status: str  # AVAILABLE, BUSY, OFFLINE
+    availability: Optional[str] = None  # Explicit availability field (e.g. AVAILABLE, BUSY)
     members_count: int = 6
     skills: List[str] = []
     equipment: List[str] = []
@@ -746,7 +747,8 @@ class NearbyAIRecommendations(BaseModel):
     recommended_resource: Optional[AIRecommendedResource] = None
 
 class NearbyLocationResponse(BaseModel):
-    user_location: Dict[str, float]
+    user_location: Dict[str, Any]
+    location_name: Optional[str] = None
     radius_km: float
     resources: List[NearbyResource]
     shelters: List[NearbyShelter]
@@ -754,6 +756,7 @@ class NearbyLocationResponse(BaseModel):
     emergencies: Optional[List[NearbyEmergency]] = []
     ai_recommendations: Optional[NearbyAIRecommendations] = None
     timestamp: datetime.datetime
+    generated_at: Optional[datetime.datetime] = None
     last_updated: Optional[datetime.datetime] = None
 
 # Backward compatibility aliases

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket } from '../context/WebSocketContext';
+import useCurrentLocation from '../hooks/useCurrentLocation';
+import { getCurrentPosition } from '../services/locationService';
 import Modal from '../components/common/Modal';
 import Loading from '../components/common/Loading';
 import EmptyState from '../components/common/EmptyState';
@@ -31,6 +33,7 @@ const CATEGORIES = [
 ];
 
 const ResourcesPage = () => {
+  const { location: userGpsLocation } = useCurrentLocation();
   const [resources, setResources] = useState([]);
   const [shortages, setShortages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,9 +52,9 @@ const ResourcesPage = () => {
     available_quantity: 100,
     reserved_quantity: 0,
     allocated_quantity: 0,
-    location_name: 'Central Warehouse, Trivandrum',
-    latitude: 8.5241,
-    longitude: 76.9366,
+    location_name: '',
+    latitude: '',
+    longitude: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -78,8 +81,18 @@ const ResourcesPage = () => {
     fetchResources();
   }, []);
 
-  const handleOpenCreate = () => {
+  const handleOpenCreate = async () => {
     setEditingResource(null);
+    let initialLat = userGpsLocation?.lat || '';
+    let initialLon = userGpsLocation?.lon || '';
+    if (!initialLat) {
+      try {
+        const pos = await getCurrentPosition();
+        initialLat = pos.lat;
+        initialLon = pos.lon;
+      } catch {}
+    }
+
     setFormData({
       name: '',
       category: 'food',
@@ -88,9 +101,9 @@ const ResourcesPage = () => {
       available_quantity: 100,
       reserved_quantity: 0,
       allocated_quantity: 0,
-      location_name: 'Central Warehouse, Trivandrum',
-      latitude: 8.5241,
-      longitude: 76.9366,
+      location_name: '',
+      latitude: initialLat,
+      longitude: initialLon,
     });
     setFormError('');
     setShowCreateModal(true);
@@ -107,8 +120,8 @@ const ResourcesPage = () => {
       reserved_quantity: res.reserved_quantity,
       allocated_quantity: res.allocated_quantity,
       location_name: res.location_name,
-      latitude: res.latitude || 8.5241,
-      longitude: res.longitude || 76.9366,
+      latitude: res.latitude || '',
+      longitude: res.longitude || '',
     });
     setFormError('');
     setShowCreateModal(true);
@@ -428,7 +441,7 @@ const ResourcesPage = () => {
               required
               value={formData.location_name}
               onChange={(e) => setFormData({ ...formData, location_name: e.target.value })}
-              placeholder="Central Food Corporation Depot, Trivandrum"
+              placeholder="e.g., Central Food Corporation Depot, Sector 4"
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-blue-500"
             />
           </div>
