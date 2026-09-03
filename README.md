@@ -109,13 +109,14 @@ During severe natural disasters (such as monsoon flash floods, landslides, cyclo
 <table>
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/resq_command_dashboard.jpg" alt="ResQ Live GIS Command Center" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+      <img src="https://drive.google.com/file/d/1G_4K_EXZC8nSfQ28FG4-X4Wim9u-XxUO/view?usp=drive_link" alt="ResQ Live GIS Command Center" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
       <br />
       <b>🌐 Live GIS Disaster Operations Center</b>
       <p><i>Real-time situational awareness with interactive geospatial heatmaps, live alert toasts, and active incident metrics.</i></p>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/resq_sos_radar.jpg" alt="ResQ Emergency SOS and Radar" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+      <img src="https://drive.google.com/file/d/1-cpdm41M-RFt3hLTgkkGjSara119yu14/view?usp=drive_link" alt="ResQ Emergency SOS and Radar" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+
       <br />
       <b>🆘 1-Click SOS & Haversine Proximity Radar</b>
       <p><i>Instant GPS distress dispatch with live proximity radar showing open shelters, supply caches, and nearby rescue squads.</i></p>
@@ -123,16 +124,16 @@ During severe natural disasters (such as monsoon flash floods, landslides, cyclo
   </tr>
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/resq_ai_intelligence.jpg" alt="ResQ AI Optimization Engine" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+      <img src="https://drive.google.com/file/d/1Pcu9y-B0vYUI7v6jHWZQ4TnFNck3NSCe/view?usp=drive_link"ResQ AI Optimization Engine" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
       <br />
-      <b>🧠 AI-Assisted Resource & Squad Optimizer</b>
-      <p><i>Automated skill matching, predictive flood risk forecasting, triage rankers, and inventory deficit rebalancing.</i></p>
+      <b>🧠 AI-Assisted Emergency & Dispatch</b>
+      <p><i>Ai - assitant emergency detection triage,real time Gis tracking & resource optimization.</i></p>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/resq_shelters_volunteers.jpg" alt="ResQ Shelter Hub and Volunteer Fleet" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+      <img src="https://drive.google.com/file/d/18QfLKAZYENqWRc31zBsCRD3qhy00klgF/view?usp=drive_link" style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
       <br />
-      <b>🏫 Relief Shelter Hub & Volunteer Fleet Dispatch</b>
-      <p><i>Live bed & ration capacity monitoring, volunteer skill filters, and one-click field mission assignments.</i></p>
+      <b>🏫 Relief Shelter Hub </b>
+      <p><i>Live bed & ration capacity monitoring, and one-click field mission assignments.</i></p>
     </td>
   </tr>
 </table>
@@ -141,7 +142,18 @@ During severe natural disasters (such as monsoon flash floods, landslides, cyclo
 
 ## 🎬 Interactive Project Demo & Walkthrough
 
-Experience ResQ locally in under 60 seconds with full interactive seed data and real-time WebSocket connectivity.
+Experience ResQ locally in under 60 seconds with full interactive seed data and real-time WebSocket connectivity.## 🎥 Project Demo
+
+See ResQ in action — from AI-powered emergency triage to ambulance dispatch and real-time location tracking.
+
+▶️ "https://drive.google.com/file/d/1eXqV30OhzwxqtdgkYo5lsrWFK1Fx3SEo/view?usp=drive_link"
+
+### 🚑 Demo Highlights
+- 🤖 AI-assisted emergency prioritization
+- 🚨 Real-time emergency dispatch
+- 📍 Live ambulance tracking
+- 🏥 Hospital/resource coordination
+- 🗺️ GIS-based location mapping
 
 ### ⚡ 1-Click Fast Launch
 
@@ -826,11 +838,14 @@ The database includes demo disaster response records across Kerala:
 
 </div>
 
-### 🎖️ Project Leadership & Development Team
+#### 🏅 Project Leadership & Development Team
 
 | Contributor / Lead | Role | Core Focus & Responsibilities | Links |
 |---|---|---|---|
-| **Thanishma Shanoje** | **Lead Architect & Full-Stack Developer** | • System Design & Architecture<br>• FastAPI Backend & Async WebSocket Engine<br>• React 18 PWA & Leaflet GIS Mapping<br>• Bounded Haversine Proximity Algorithms<br>• AI-Powered Triage & Resource Optimization Engine | [![GitHub](https://img.shields.io/badge/GitHub-Profile-181717?style=flat&logo=github)](https://github.com/thanishma33-create) [![Email](https://img.shields.io/badge/Email-Contact-D14836?style=flat&logo=gmail&logoColor=white)](mailto:thanishma33@gmail.com) |
+| **Thanishma Shanoje** | **Frontend Developer** | Frontend UI/UX Design & Implementation<br>React 18 PWA Development<br>Leaflet GIS Mapping<br>Responsive & User-Friendly Interface Development | [GitHub](https://github.com/thanishma33-create) · [Email](mailto:thanishma33@gmail.com) |
+| **Shisana Fathim** | **Backend Developer** | Backend Development & API Integration<br>Database Management<br>Emergency & Resource Services | [GitHub](https://github.com/shisan) · [Email](mailto:shisanafathim09@gmail.com) |
+| **Malavika B** | **AI / Backend & Integration** | AI-Assisted Decision Support<br>Priority & Recommendation Logic<br>Backend Integration | [GitHub](https://github.com/sxanika) · [Email](mailto:sxanika0@gmail.com) |
+| **Rishananda** | **UI/UX & Quality Assurance** | UI/UX Design & Usability<br>Interface Evaluation<br>Testing & Quality Assurance | [GitHub](https://github.com/RISHANANDA) · [Email](mailto:rishanandvrajeev@gmail.com) |
 
 ### 📌 Project Summary & Repository Details
 
