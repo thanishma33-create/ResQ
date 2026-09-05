@@ -154,7 +154,16 @@ See ResQ in action — from AI-powered emergency triage to ambulance dispatch an
 - 📍 Live ambulance tracking
 - 🏥 Hospital/resource coordination
 - 🗺️ GIS-based location mapping
+## 🚀 Live Demo
 
+🌐 **RESQ Web Application:**  
+https://thanishma33-create.github.io/ResQ/
+
+⚡ **Backend API:**  
+https://resq-se6j.onrender.com
+
+📚 **API Documentation:**  
+https://resq-se6j.onrender.com/docs
 ### ⚡ 1-Click Fast Launch
 
 ```bash
@@ -172,12 +181,12 @@ See ResQ in action — from AI-powered emergency triage to ambulance dispatch an
 
 ### 🌐 Access Endpoints
 
-| Portal | Local URL | Description |
+| Portal | Live URL | Description |
 |---|---|---|
-| **Web Application** | [http://127.0.0.1:3000](http://127.0.0.1:3000) | Full responsive PWA web client |
-| **Interactive API Docs (Swagger)** | [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) | Complete OpenAPI / Swagger interactive testing UI |
-| **Alternative API Docs (ReDoc)** | [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc) | Standardized ReDoc technical schema reference |
-| **WebSocket Stream** | `ws://127.0.0.1:8000/ws` | Live bi-directional emergency dispatch channel |
+| **Web Application** | [Launch RESQ](https://thanishma33-create.github.io/ResQ/) | Full responsive PWA web client |
+| **Interactive API Docs (Swagger)** | [API Documentation](https://resq-se6j.onrender.com/docs) | Complete OpenAPI / Swagger interactive testing UI |
+| **Alternative API Docs (ReDoc)** | [ReDoc](https://resq-se6j.onrender.com/redoc) | Standardized ReDoc technical reference |
+| **WebSocket Stream** | `wss://resq-se6j.onrender.com/ws` | Live bi-directional emergency dispatch channel |
 
 ### 🔑 Pre-Configured Demo Credentials
 
